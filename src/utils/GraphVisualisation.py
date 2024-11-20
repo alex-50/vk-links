@@ -5,15 +5,9 @@ class GraphVisualisation:
     def __init__(self, config=None) -> None:
         self.config = config
 
-    def set_data(self, users_data, users_connections):
-        self.users_data = {}
-        self.users_connections = {}
-
-        for user_id in users_data:
-            self.users_data[int(user_id)] = users_data[user_id]
-
-        for user_id in users_connections:
-            self.users_connections[int(user_id)] = users_connections[user_id]
+    def set_data_from_json(self, users_data, users_connections):
+        self.users_data = {int(user_id): users_data[user_id] for user_id in users_data}
+        self.users_connections = {int(user_id): users_connections[user_id] for user_id in users_connections}
 
     @staticmethod
     def _count_connections_from_b_to_a(graph_a, graph_b, user_id) -> int:

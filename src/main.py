@@ -18,7 +18,7 @@ def load_config_file() -> dict:
         config_data = json.loads(
             open("config.json", mode="r", encoding="utf-8").read()
         )
-    except:
+    except Exception:
         raise ErrorNotFoundNecessaryDependenciesOfApp(
             "config.json not found - use script with param: m=config (config generation)")
 
@@ -100,7 +100,7 @@ def main():
                         open(f"{config.save_path}{args.userids}.json", mode="r", encoding="utf-8").read()
                     )
                     visualisation = GraphVisualisation(config)
-                    visualisation.set_data(js_users_data["data"], js_users_data["connections"])
+                    visualisation.set_data_from_json(js_users_data["data"], js_users_data["connections"])
                     visualisation.generate_gexf()
 
                 except FileNotFoundError:
@@ -119,8 +119,8 @@ def main():
                     visualisation1 = GraphVisualisation(config)
                     visualisation2 = GraphVisualisation(config)
 
-                    visualisation1.set_data(js_users_data_1["data"], js_users_data_1["connections"])
-                    visualisation2.set_data(js_users_data_2["data"], js_users_data_2["connections"])
+                    visualisation1.set_data_from_json(js_users_data_1["data"], js_users_data_1["connections"])
+                    visualisation2.set_data_from_json(js_users_data_2["data"], js_users_data_2["connections"])
 
                     GraphVisualisation.merge_graphs(visualisation1, visualisation2, args.userids, args.userids2)
 
