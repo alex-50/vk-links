@@ -1,0 +1,1 @@
+{"depth": 2, "min_degree": 2, "crawler_depth_conditions": 2, "request_fields": ["city", "school", "university", "work", "home_town"], "crawler_conditions": {"ok": [], "ignore": []}, "ignore_users_id": [], "min_degree_common_connection": 1, "save_path": "C:\\Users\\alexa\\vk-links-data\\"}
