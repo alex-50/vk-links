@@ -45,7 +45,7 @@ class GraphVisualisation:
                     for friend_id in users_connections[user_id]:
                         users_data[friend_id] = graph_b.users_data[friend_id]
 
-        new_graph.set_data(users_data, users_connections)
+        new_graph.set_data_from_json(users_data, users_connections)
         new_graph.generate_gexf(
             path=f"{graph_a.config.save_path}{name1} + {name2}(merged)"
         )
