@@ -2,16 +2,18 @@ from dataclasses import dataclass
 
 
 @dataclass
-class SearchSetting:
+class Setting:
+    root_user_ids: str  # страница корневого пользователя
+    save_path: str  # путь до папки с сохранением данных
+
+
+@dataclass
+class ParseSetting(Setting):
     depth: int  # глубина захода
-    root_user_ids: str  # корневой пользователь
     crawler_depth_conditions: int  # глубина до которой надо проверять условие
-    min_degree: int  # минимальная степень вершины
     request_fields: list[str]  # поля для запроса
     crawler_conditions: list[dict]  # список условий
     ignore_users_id: list[int]  # игнорируемы пользователи
-    min_degree_common_connection: int  # минимальное количество связей между груфами (для слияния)
-    save_path: str  # путь к папке для сохранения данных
 
     def check_valid_user(self, vk_json_user) -> bool:
 
@@ -37,3 +39,9 @@ class SearchSetting:
             return True
 
         return True
+
+
+@dataclass
+class VisualisationSetting(Setting):
+    min_degree: int  # минимальная степень вершины
+    min_degree_common_connection: int  # минимальное количество связей между груфами (для слияния)

@@ -1,8 +1,9 @@
 import networkx as nx
+from utils.SearchSetting import VisualisationSetting
 
 
 class GraphVisualisation:
-    def __init__(self, config=None) -> None:
+    def __init__(self, config: VisualisationSetting) -> None:
         self.config = config
 
     def set_data_from_json(self, users_data, users_connections):

@@ -2,12 +2,12 @@ import time
 import json
 
 from vk import API, exceptions
-from utils.SearchSetting import SearchSetting
+from utils.SearchSetting import ParseSetting
 
 
 class DataLoader:
     def __init__(
-            self, config: SearchSetting, token: str, api_version="5.92"
+            self, config: ParseSetting, token: str, api_version="5.92"
     ) -> None:
         self._api = API(access_token=token, v=api_version)
         self.config = config

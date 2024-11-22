@@ -4,13 +4,17 @@ import pathlib
 import argparse
 import platform
 
-from utils.SearchSetting import SearchSetting
+from utils.SearchSetting import ParseSetting, VisualisationSetting
 from utils.VKDataLoader import DataLoader
 from utils.GraphVisualisation import GraphVisualisation
 
 
 class ErrorNotFoundNecessaryDependenciesOfApp(Exception):
     pass
+
+
+DIR_SEP = "\\" if platform.system() == "Windows" else "/"
+DIR_WITH_EXEC_SCRIPT = os.path.dirname(os.path.realpath(__file__))
 
 
 def load_config_file() -> dict:
@@ -43,8 +47,7 @@ def main():
 
     if args.mode == "config":
 
-        sep = "\\" if platform.system() == "Windows" else "/"
-        save_path = str(pathlib.Path.home()) + sep + "vk-links-data" + sep
+        save_path = DIR_WITH_EXEC_SCRIPT + DIR_SEP + "vk-links-data" + DIR_SEP
 
         if not os.path.exists(save_path):
             os.mkdir(save_path)
@@ -74,17 +77,23 @@ def main():
 
         config_data = load_config_file()
 
-        config = SearchSetting(
-            root_user_ids=args.userids,
-            depth=config_data["depth"],
-            min_degree=config_data["min_degree"],
-            crawler_depth_conditions=config_data["crawler_depth_conditions"],
-            request_fields=config_data["request_fields"],
-            crawler_conditions=config_data["crawler_conditions"],
-            ignore_users_id=config_data["ignore_users_id"],
-            min_degree_common_connection=config_data["min_degree_common_connection"],
-            save_path=config_data["save_path"]
-        )
+        if args.mode == "mining":
+            config = ParseSetting(
+                root_user_ids=args.userids,
+                save_path=config_data["save_path"],
+                depth=config_data["depth"],
+                crawler_depth_conditions=config_data["crawler_depth_conditions"],
+                request_fields=config_data["request_fields"],
+                crawler_conditions=config_data["crawler_conditions"],
+                ignore_users_id=config_data["ignore_users_id"],
+            )
+        else:
+            config = VisualisationSetting(
+                root_user_ids=args.userids,
+                save_path=config_data["save_path"],
+                min_degree=config_data["min_degree"],
+                min_degree_common_connection=config_data["min_degree_common_connection"],
+            )
 
         match args.mode:
 
