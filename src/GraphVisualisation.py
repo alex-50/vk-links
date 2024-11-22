@@ -1,5 +1,5 @@
 import networkx as nx
-from utils.SearchSetting import VisualisationSetting
+from .SearchSetting import VisualisationSetting
 
 
 class GraphVisualisation:
@@ -82,4 +82,4 @@ class GraphVisualisation:
                     graph.add_edge(user_id, friend_id)
 
         nx.write_gexf(graph, f"{self.config.save_path}{self.config.root_user_ids}.gexf" if not path else f"{path}.gexf")
-        print(f".gexf-file was be saved")
+        print(f".gexf-file was be saved at {self.config.save_path}")

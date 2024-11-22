@@ -1,8 +1,8 @@
 import time
 import json
 
-from vk import API, exceptions
-from utils.SearchSetting import ParseSetting
+from vk import API
+from .SearchSetting import ParseSetting
 
 
 class DataLoader:
@@ -22,25 +22,25 @@ class DataLoader:
                 or "university" in config.request_fields
                 or "work" in config.request_fields
         ):
-            self._need_params.append("occupation")
+            self._need_params.extend(["occupation", "education"])
 
         for param in ("city", "home_town", "status"):
             if param in config.request_fields:
                 self._need_params.append(param)
 
         root = self._api.users.get(user_ids=config.root_user_ids)[0]
-        self.root_id = root["id"]
 
+        self.root_id = root["id"]
         self.users_data[self.root_id] = {}
         self.users_data[self.root_id]["fullname"] = f'{root["first_name"]} {root["last_name"]}'
 
         self._data_load(self.root_id)
 
-        print("Find accounts: ", len(self.users_data.keys()))
+        print("Accounts found: ", len(self.users_data.keys()))
 
     def save_data(self):
 
-        print(f"Users data save in {self.config.root_user_ids}.json")
+        print(f"Users data save in {self.config.root_user_ids}.json at {self.config.save_path}")
 
         with open(
                 f"{self.config.save_path}{self.config.root_user_ids}.json", mode="w", encoding="utf-8"

@@ -23,9 +23,10 @@ class ParseSetting(Setting):
                     for key in condition:
 
                         if condition[key].lower() not in vk_json_user[key].lower():
+                            print(f"Condition \"{vk_json_user['fullname']}\" - failed")
                             break
                     else:
-                        print(f"Condition f{vk_json_user['fullname']} - success")
+                        print(f"Condition \"{vk_json_user['fullname']}\" - success")
                         return True
             return False
 
@@ -34,8 +35,9 @@ class ParseSetting(Setting):
                 if set(condition.keys()) <= set(vk_json_user.keys()):
                     for key in condition:
                         if condition[key].lower() in vk_json_user[key].lower():
+                            print(f"Condition \"{vk_json_user['fullname']}\" - failed")
                             return False
-            print(f"Condition f{vk_json_user['fullname']} - success")
+            print(f"Condition \"{vk_json_user['fullname']}\" - success")
             return True
 
         return True

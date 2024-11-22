@@ -1,12 +1,11 @@
 import os
 import json
-import pathlib
 import argparse
 import platform
 
-from utils.SearchSetting import ParseSetting, VisualisationSetting
-from utils.VKDataLoader import DataLoader
-from utils.GraphVisualisation import GraphVisualisation
+from src.SearchSetting import ParseSetting, VisualisationSetting
+from src.VKDataLoader import DataLoader
+from src.GraphVisualisation import GraphVisualisation
 
 
 class ErrorNotFoundNecessaryDependenciesOfApp(Exception):
@@ -24,7 +23,7 @@ def load_config_file() -> dict:
         )
     except Exception:
         raise ErrorNotFoundNecessaryDependenciesOfApp(
-            "config.json not found - use script with param: m=config (config generation)")
+            f"config.json not found in \"{DIR_WITH_EXEC_SCRIPT}\" - use script with param: m=config (config generation)")
 
     return config_data
 
