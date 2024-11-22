@@ -20,7 +20,7 @@ DIR_WITH_EXEC_SCRIPT = os.path.dirname(os.path.realpath(__file__))
 def load_config_file() -> dict:
     try:
         config_data = json.loads(
-            open("config.json", mode="r", encoding="utf-8").read()
+            open(DIR_WITH_EXEC_SCRIPT + DIR_SEP + "config.json", mode="r", encoding="utf-8").read()
         )
     except Exception:
         raise ErrorNotFoundNecessaryDependenciesOfApp(
@@ -73,11 +73,11 @@ def main():
                 config_file
             )
 
-    elif args.mode in {"visual", "mining", "merge"}:
+    elif args.mode in {"visual", "parse", "merge"}:
 
         config_data = load_config_file()
 
-        if args.mode == "mining":
+        if args.mode == "parse":
             config = ParseSetting(
                 root_user_ids=args.userids,
                 save_path=config_data["save_path"],
@@ -97,7 +97,7 @@ def main():
 
         match args.mode:
 
-            case "mining":
+            case "parse":
 
                 TOKEN = load_token()
                 loader = DataLoader(config, TOKEN)
