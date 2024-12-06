@@ -51,34 +51,51 @@ class GraphVisualisation:
             path=f"{graph_a.config.save_path}{name1} + {name2}(merged)"
         )
 
-    def _count_degree(self, user_id):
-
-        edges_to = set()
-
-        if user_id in self.users_connections:
-            edges_to = set(friend_id for friend_id in self.users_connections[user_id])
-        else:
-            for tmp_user_id in self.users_connections:
-                if user_id in self.users_connections[tmp_user_id]:
-                    edges_to.add(tmp_user_id)
-
-        return len(edges_to)
+    def _count_degree(self, user_id, valid_users_from_ends):
+        return len(set(filter(lambda id: id in self.users_connections, self.users_connections[user_id])) | set(
+            self.users_connections[user_id]) & valid_users_from_ends)
 
     def generate_gexf(self, path=""):
 
         graph = nx.Graph()
 
-        for user_id in self.users_connections:
+        all_users_from_ends = list(set(self.users_data.keys()) - set(self.users_connections.keys()))
+        valid_users_from_ends = set()
 
-            if len(self.users_connections[user_id]) < self.config.min_degree:
+        for user_id in all_users_from_ends:
+            edges_to = set(filter(lambda id: user_id in self.users_connections[id], self.users_connections))
+            if len(edges_to) >= self.config.min_degree:
+                valid_users_from_ends.add(user_id)
+
+        ready_nodes = set()
+
+        for user_id in self.users_connections: 
+
+            if self._count_degree(user_id, valid_users_from_ends) < self.config.min_degree:
                 continue
 
-            graph.add_node(user_id, label=self.users_data[user_id]["fullname"], **(self.users_data[user_id]))
-
             for friend_id in self.users_connections[user_id]:
-                if self._count_degree(friend_id) >= self.config.min_degree:
-                    graph.add_node(friend_id, label=self.users_data[friend_id]["fullname"],
-                                   **(self.users_data[friend_id]))
+                ok = False
+
+                if friend_id in self.users_connections:
+
+                    if self._count_degree(friend_id, valid_users_from_ends) >= self.config.min_degree:
+                        ok = True
+                else:
+                    if friend_id in valid_users_from_ends:
+                        ok = True
+
+                if ok:
+                    if user_id not in ready_nodes:
+                        graph.add_node(user_id, label=self.users_data[user_id]["fullname"],
+                                       **(self.users_data[user_id]))
+                        ready_nodes.add(user_id)
+
+                    if friend_id not in ready_nodes:
+                        graph.add_node(friend_id, label=self.users_data[friend_id]["fullname"],
+                                       **(self.users_data[friend_id]))
+                        ready_nodes.add(friend_id)
+
                     graph.add_edge(user_id, friend_id)
 
         nx.write_gexf(graph, f"{self.config.save_path}{self.config.root_user_ids}.gexf" if not path else f"{path}.gexf")
