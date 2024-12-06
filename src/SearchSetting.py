@@ -3,17 +3,17 @@ from dataclasses import dataclass
 
 @dataclass
 class Setting:
-    root_user_ids: str  # страница корневого пользователя
-    save_path: str  # путь до папки с сохранением данных
-    ignore_users_id: list[int]  # игнорируемые пользователи
+    root_user_ids: str  # the root user's page
+    save_path: str  # the path to the folder where the data is saved
+    ignore_users_id: list[int]  # ignored users
 
 
 @dataclass
 class ParseSetting(Setting):
-    depth: int  # глубина захода
-    crawler_depth_conditions: int  # глубина до которой надо проверять условие
-    request_fields: list[str]  # поля для запроса
-    crawler_conditions: list[dict]  # список условий
+    depth: int  # depth of entry
+    crawler_depth_conditions: int  # the depth to which the condition should be checked
+    request_fields: list[str]  # fields for the request
+    crawler_conditions: list[dict]  # list of conditions
 
     def check_valid_user(self, vk_json_user) -> bool:
 
@@ -45,5 +45,5 @@ class ParseSetting(Setting):
 
 @dataclass
 class VisualisationSetting(Setting):
-    min_degree: int  # минимальная степень вершины
-    min_degree_common_connection: int  # минимальное количество связей между груфами (для слияния)
+    min_degree: int  # the minimum degree of the vertex
+    min_degree_common_connection: int  # minimum number of connections between graphs (for merging)
