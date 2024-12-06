@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class Setting:
     root_user_ids: str  # страница корневого пользователя
     save_path: str  # путь до папки с сохранением данных
+    ignore_users_id: list[int]  # игнорируемые пользователи
 
 
 @dataclass
@@ -13,7 +14,6 @@ class ParseSetting(Setting):
     crawler_depth_conditions: int  # глубина до которой надо проверять условие
     request_fields: list[str]  # поля для запроса
     crawler_conditions: list[dict]  # список условий
-    ignore_users_id: list[int]  # игнорируемы пользователи
 
     def check_valid_user(self, vk_json_user) -> bool:
 

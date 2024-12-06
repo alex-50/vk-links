@@ -63,18 +63,26 @@ class GraphVisualisation:
         valid_users_from_ends = set()
 
         for user_id in all_users_from_ends:
-            edges_to = set(filter(lambda id: user_id in self.users_connections[id], self.users_connections))
+            edges_to = set(
+                filter(lambda id: user_id in self.users_connections[id] and id not in self.config.ignore_users_id,
+                       self.users_connections))
             if len(edges_to) >= self.config.min_degree:
                 valid_users_from_ends.add(user_id)
 
+        valid_users_from_ends -= set(self.config.ignore_users_id)
+
         ready_nodes = set()
 
-        for user_id in self.users_connections: 
+        for user_id in self.users_connections:
 
-            if self._count_degree(user_id, valid_users_from_ends) < self.config.min_degree:
+            if self._count_degree(user_id, valid_users_from_ends) < self.config.min_degree or user_id in self.config.ignore_users_id:
                 continue
 
             for friend_id in self.users_connections[user_id]:
+
+                if friend_id in self.config.ignore_users_id:
+                    continue
+
                 ok = False
 
                 if friend_id in self.users_connections:

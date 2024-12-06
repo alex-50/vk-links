@@ -92,6 +92,7 @@ def main():
                 save_path=config_data["save_path"],
                 min_degree=config_data["min_degree"],
                 min_degree_common_connection=config_data["min_degree_common_connection"],
+                ignore_users_id=config_data["ignore_users_id"]
             )
 
         match args.mode:
