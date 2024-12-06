@@ -1,19 +1,23 @@
 import networkx as nx
-from .SearchSetting import VisualisationSetting
+from SearchSetting import VisualisationSetting
+
+from typing import Dict, Set, List
 
 
 class GraphVisualisation:
     def __init__(self, config: VisualisationSetting) -> None:
         self.config = config
+        self.users_data = None
+        self.users_connections = None
 
-    def set_data_from_json(self, users_data, users_connections):
-        self.users_data = {int(user_id): users_data[user_id] for user_id in users_data}
-        self.users_connections = {
+    def set_data_from_json(self, users_data: Dict[str, Dict], users_connections: Dict[str, List[int]]) -> None:
+        self.users_data: Dict[int, Dict] = {int(user_id): users_data[user_id] for user_id in users_data}
+        self.users_connections: Dict[int, List[int]] = {
             int(user_id): users_connections[user_id] for user_id in users_connections
         }
 
     @staticmethod
-    def _count_connections_from_b_to_a(graph_a, graph_b, user_id) -> int:
+    def _count_connections_from_b_to_a(graph_a, graph_b, user_id: int) -> int:
 
         connections_count = 0
 
@@ -33,7 +37,7 @@ class GraphVisualisation:
         return connections_count
 
     @staticmethod
-    def merge_graphs(graph_a, graph_b, name1, name2):
+    def merge_graphs(graph_a, graph_b, name1: str, name2: str) -> None:
 
         new_graph = GraphVisualisation(graph_a.config)
 
@@ -42,10 +46,10 @@ class GraphVisualisation:
 
         for user_id in graph_b.users_data:
             if (
-                GraphVisualisation._count_connections_from_b_to_a(
-                    graph_a, graph_b, user_id
-                )
-                > graph_a.config.min_degree_common_connection
+                    GraphVisualisation._count_connections_from_b_to_a(
+                        graph_a, graph_b, user_id
+                    )
+                    > graph_a.config.min_degree_common_connection
             ):
                 if user_id not in graph_a.users_connections:
                     users_connections[user_id] = graph_b.users_connections[user_id]
@@ -57,7 +61,7 @@ class GraphVisualisation:
             path=f"{graph_a.config.save_path}{name1} + {name2}(merged)"
         )
 
-    def _count_degree(self, user_id, valid_users_from_ends):
+    def _count_degree(self, user_id: int, valid_users_from_ends: Set[int]) -> int:
         return len(
             set(
                 filter(
@@ -68,20 +72,18 @@ class GraphVisualisation:
             | set(self.users_connections[user_id]) & valid_users_from_ends
         )
 
-    def generate_gexf(self, path=""):
+    def generate_gexf(self, path="") -> None:
 
         graph = nx.Graph()
 
-        all_users_from_ends = list(
-            set(self.users_data.keys()) - set(self.users_connections.keys())
-        )
-        valid_users_from_ends = set()
+        all_users_from_ends: Set[int] = set(self.users_data.keys()) - set(self.users_connections.keys())
+        valid_users_from_ends: Set[int] = set()
 
         for user_id in all_users_from_ends:
             edges_to = set(
                 filter(
                     lambda id: user_id in self.users_connections[id]
-                    and id not in self.config.ignore_users_id,
+                               and id not in self.config.ignore_users_id,
                     self.users_connections,
                 )
             )
@@ -95,9 +97,9 @@ class GraphVisualisation:
         for user_id in self.users_connections:
 
             if (
-                self._count_degree(user_id, valid_users_from_ends)
-                < self.config.min_degree
-                or user_id in self.config.ignore_users_id
+                    self._count_degree(user_id, valid_users_from_ends)
+                    < self.config.min_degree
+                    or user_id in self.config.ignore_users_id
             ):
                 continue
 
@@ -111,8 +113,8 @@ class GraphVisualisation:
                 if friend_id in self.users_connections:
 
                     if (
-                        self._count_degree(friend_id, valid_users_from_ends)
-                        >= self.config.min_degree
+                            self._count_degree(friend_id, valid_users_from_ends)
+                            >= self.config.min_degree
                     ):
                         ok = True
                 else:

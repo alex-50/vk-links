@@ -2,11 +2,11 @@ import time
 import json
 
 from vk import API
-from .SearchSetting import ParseSetting
+from SearchSetting import ParseSetting
 
 
 class DataLoader:
-    def __init__(self, config: ParseSetting, token: str, api_version="5.92") -> None:
+    def __init__(self, config: ParseSetting, token: str, api_version: str = "5.92") -> None:
         self._api = API(access_token=token, v=api_version)
         self.config = config
 
@@ -16,9 +16,9 @@ class DataLoader:
         self._need_params = []
 
         if (
-            "school" in config.request_fields
-            or "university" in config.request_fields
-            or "work" in config.request_fields
+                "school" in config.request_fields
+                or "university" in config.request_fields
+                or "work" in config.request_fields
         ):
             self._need_params.extend(["occupation", "education"])
 
@@ -38,16 +38,16 @@ class DataLoader:
 
         print("Accounts found: ", len(self.users_data.keys()))
 
-    def save_data(self):
+    def save_data(self) -> None:
 
         print(
             f"Users data save in {self.config.root_user_ids}.json at {self.config.save_path}"
         )
 
         with open(
-            f"{self.config.save_path}{self.config.root_user_ids}.json",
-            mode="w",
-            encoding="utf-8",
+                f"{self.config.save_path}{self.config.root_user_ids}.json",
+                mode="w",
+                encoding="utf-8",
         ) as user_datafile:
             json.dump(
                 {
@@ -57,7 +57,7 @@ class DataLoader:
                 user_datafile,
             )
 
-    def _data_load(self, user_id, current_depth=1) -> None:
+    def _data_load(self, user_id: int, current_depth: int = 1) -> None:
 
         if current_depth > self.config.depth:
             return None
@@ -87,9 +87,9 @@ class DataLoader:
                 current_user_js_data["status"] = friend.get("status", "")
 
             if (
-                "school" in self.config.request_fields
-                or "university" in self.config.request_fields
-                or "work" in self.config.request_fields
+                    "school" in self.config.request_fields
+                    or "university" in self.config.request_fields
+                    or "work" in self.config.request_fields
             ) and "occupation" in friend.keys():
                 current_user_js_data[friend["occupation"]["type"]] = friend[
                     "occupation"
@@ -110,8 +110,8 @@ class DataLoader:
                 self.users_data[friend["id"]] = current_user_js_data
 
                 if (
-                    friend["can_access_closed"]
-                    and "deactivated" not in friend
-                    and friend["id"] not in self.config.ignore_users_id
+                        friend["can_access_closed"]
+                        and "deactivated" not in friend
+                        and friend["id"] not in self.config.ignore_users_id
                 ):
                     self._data_load(friend["id"], current_depth + 1)

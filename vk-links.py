@@ -7,6 +7,8 @@ from src.SearchSetting import ParseSetting, VisualisationSetting
 from src.VKDataLoader import DataLoader
 from src.GraphVisualisation import GraphVisualisation
 
+from typing import List, Dict, Union
+
 
 class ErrorNotFoundNecessaryDependenciesOfApp(Exception):
     pass
@@ -16,7 +18,7 @@ DIR_SEP = "\\" if platform.system() == "Windows" else "/"
 DIR_WITH_EXEC_SCRIPT = os.path.dirname(os.path.realpath(__file__))
 
 
-def load_config_file() -> dict:
+def load_config_file() -> Dict[str, Union[str, int, List[str | int | dict]]]:
     try:
         config_data = json.loads(
             open(
@@ -42,7 +44,7 @@ def load_token() -> str:
         )
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-m", "--mode", required=True)
