@@ -6,7 +6,9 @@ from .SearchSetting import ParseSetting
 
 
 class DataLoader:
-    def __init__(self, config: ParseSetting, token: str, api_version: str = "5.92") -> None:
+    def __init__(
+        self, config: ParseSetting, token: str, api_version: str = "5.92"
+    ) -> None:
         self._api = API(access_token=token, v=api_version)
         self.config = config
 
@@ -14,9 +16,21 @@ class DataLoader:
         self.users_connections = {}
 
         self._need_params = list(
-            {"city", "home_town", "status", "sex", "site", "about", "domain", "occupation", "schools",
-             "universities", "home_town"} & set(self.config.request_fields))
-        print(self._need_params)
+            {
+                "city",
+                "home_town",
+                "status",
+                "sex",
+                "site",
+                "about",
+                "domain",
+                "occupation",
+                "schools",
+                "universities",
+                "home_town",
+            }
+            & set(self.config.request_fields)
+        )
 
         root = self._api.users.get(user_ids=config.root_user_ids)[0]
 
@@ -37,9 +51,9 @@ class DataLoader:
         )
 
         with open(
-                f"{self.config.save_path}{self.config.root_user_ids}.json",
-                mode="w",
-                encoding="utf-8",
+            f"{self.config.save_path}{self.config.root_user_ids}.json",
+            mode="w",
+            encoding="utf-8",
         ) as user_datafile:
             json.dump(
                 {
@@ -72,7 +86,7 @@ class DataLoader:
                 "fullname": f'{friend["first_name"]} {friend["last_name"]}',
             }
 
-            for param in ("status", "site", "about", "domain", "sex", "home_town"):
+            for param in ("status", "site", "about", "domain", "home_town"):
                 if param in self.config.request_fields and param in friend:
                     current_user_js_data[param] = friend.get(param, "")
 
@@ -80,14 +94,22 @@ class DataLoader:
                 current_user_js_data["city"] = friend["city"]["title"]
 
             if "sex" in self.config.request_fields:
-                current_user_js_data["sex"] = ("male" if friend["sex"] == 2 else "female") if friend["sex"] else "undef"
+                current_user_js_data["sex"] = (
+                    ("male" if friend["sex"] == 2 else "female")
+                    if friend["sex"]
+                    else "undef"
+                )
 
             if "occupation" in self.config.request_fields and "occupation" in friend:
-                current_user_js_data[f'{friend["occupation"]["type"]}(occupation)'] = friend["occupation"]["name"]
+                current_user_js_data[
+                    f'{friend["occupation"]["type"]}(occupation)'
+                ] = friend["occupation"]["name"]
 
             for param in ("schools", "universities"):
                 if param in self.config.request_fields and param in friend:
-                    current_user_js_data[param] = "; ".join(edu_org["name"] for edu_org in friend[param])
+                    current_user_js_data[param] = "; ".join(
+                        edu_org["name"] for edu_org in friend[param]
+                    )
 
             friend_is_valid = True
 
@@ -101,8 +123,8 @@ class DataLoader:
                 self.users_data[friend["id"]] = current_user_js_data
 
                 if (
-                        friend["can_access_closed"]
-                        and "deactivated" not in friend
-                        and friend["id"] not in self.config.ignore_users_id
+                    friend["can_access_closed"]
+                    and "deactivated" not in friend
+                    and friend["id"] not in self.config.ignore_users_id
                 ):
                     self._data_load(friend["id"], current_depth + 1)

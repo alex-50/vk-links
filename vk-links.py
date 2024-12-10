@@ -67,11 +67,10 @@ def main() -> None:
                     "min_degree": 2,
                     "crawler_depth_conditions": 2,
                     "request_fields": [
-                        "city",
-                        "school",
-                        "university",
-                        "work",
-                        "home_town",
+                        "city", "home_town",
+                        "status", "sex", "site",
+                        "about", "domain", "occupation",
+                        "schools", "universities"
                     ],
                     "crawler_conditions": {"ok": [], "ignore": []},
                     "ignore_users_id": [],
