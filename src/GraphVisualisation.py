@@ -134,7 +134,7 @@ class GraphVisualisation:
                         graph.add_node(
                             user_id,
                             label=self.users_data[user_id]["fullname"],
-                            **dict(filter(lambda item: item[0] != "fullname", self.users_data[user_id].items()))
+                            **{key: value for key, value in self.users_data[user_id].items() if key != "fullname"}
                         )
                         ready_nodes.add(user_id)
 
@@ -142,7 +142,7 @@ class GraphVisualisation:
                         graph.add_node(
                             friend_id,
                             label=self.users_data[friend_id]["fullname"],
-                            **dict(filter(lambda item: item[0] != "fullname", self.users_data[friend_id].items()))
+                            **{key: value for key, value in self.users_data[friend_id].items() if key != "fullname"}
                         )
                         ready_nodes.add(friend_id)
 
