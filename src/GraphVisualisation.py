@@ -1,5 +1,5 @@
 import networkx as nx
-from SearchSetting import VisualisationSetting
+from .SearchSetting import VisualisationSetting
 
 from typing import Dict, Set, List
 

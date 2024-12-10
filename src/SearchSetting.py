@@ -12,7 +12,7 @@ class Setting:
 class ParseSetting(Setting):
     depth: int  # depth of entry
     crawler_depth_conditions: int  # the depth to which the condition should be checked
-    request_fields: list[str]  # fields for the request
+    request_fields: set[str]  # fields for the request
     crawler_conditions: list[dict]  # list of conditions
 
     def check_valid_user(self, vk_json_user) -> bool:

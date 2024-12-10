@@ -2,7 +2,7 @@ import time
 import json
 
 from vk import API
-from SearchSetting import ParseSetting
+from .SearchSetting import ParseSetting
 
 
 class DataLoader:
@@ -13,28 +13,20 @@ class DataLoader:
         self.users_data = {}
         self.users_connections = {}
 
-        self._need_params = []
-
-        if (
-                "school" in config.request_fields
-                or "university" in config.request_fields
-                or "work" in config.request_fields
-        ):
-            self._need_params.extend(["occupation", "education"])
-
-        for param in ("city", "home_town", "status"):
-            if param in config.request_fields:
-                self._need_params.append(param)
+        self._need_params = list(
+            {"city", "home_town", "status", "sex", "site", "about", "domain", "occupation", "schools",
+             "universities", "home_town"} & set(self.config.request_fields))
+        print(self._need_params)
 
         root = self._api.users.get(user_ids=config.root_user_ids)[0]
 
-        self.root_id = root["id"]
-        self.users_data[self.root_id] = {}
-        self.users_data[self.root_id][
+        root_id = root["id"]
+        self.users_data[root_id] = {}
+        self.users_data[root_id][
             "fullname"
         ] = f'{root["first_name"]} {root["last_name"]}'
 
-        self._data_load(self.root_id)
+        self._data_load(root_id)
 
         print("Accounts found: ", len(self.users_data.keys()))
 
@@ -80,20 +72,22 @@ class DataLoader:
                 "fullname": f'{friend["first_name"]} {friend["last_name"]}',
             }
 
-            if "city" in self.config.request_fields and "city" in friend.keys():
+            for param in ("status", "site", "about", "domain", "sex", "home_town"):
+                if param in self.config.request_fields and param in friend:
+                    current_user_js_data[param] = friend.get(param, "")
+
+            if "city" in self.config.request_fields and "city" in friend:
                 current_user_js_data["city"] = friend["city"]["title"]
 
-            if "status" in self.config.request_fields:
-                current_user_js_data["status"] = friend.get("status", "")
+            if "sex" in self.config.request_fields:
+                current_user_js_data["sex"] = ("male" if friend["sex"] == 2 else "female") if friend["sex"] else "undef"
 
-            if (
-                    "school" in self.config.request_fields
-                    or "university" in self.config.request_fields
-                    or "work" in self.config.request_fields
-            ) and "occupation" in friend.keys():
-                current_user_js_data[friend["occupation"]["type"]] = friend[
-                    "occupation"
-                ]["name"]
+            if "occupation" in self.config.request_fields and "occupation" in friend:
+                current_user_js_data[f'{friend["occupation"]["type"]}(occupation)'] = friend["occupation"]["name"]
+
+            for param in ("schools", "universities"):
+                if param in self.config.request_fields and param in friend:
+                    current_user_js_data[param] = "; ".join(edu_org["name"] for edu_org in friend[param])
 
             friend_is_valid = True
 
@@ -102,9 +96,6 @@ class DataLoader:
                     friend_is_valid = False
 
             if friend_is_valid:
-                current_user_js_data[
-                    "fullname"
-                ] = f'{friend["first_name"]} {friend["last_name"]}'
 
                 self.users_connections[user_id].append(friend["id"])
                 self.users_data[friend["id"]] = current_user_js_data

@@ -91,7 +91,7 @@ def main() -> None:
                 save_path=config_data["save_path"],
                 depth=config_data["depth"],
                 crawler_depth_conditions=config_data["crawler_depth_conditions"],
-                request_fields=config_data["request_fields"],
+                request_fields=set(config_data["request_fields"]),
                 crawler_conditions=config_data["crawler_conditions"],
                 ignore_users_id=config_data["ignore_users_id"],
             )
