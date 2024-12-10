@@ -7,8 +7,8 @@ from typing import Dict, Set, List
 class GraphVisualisation:
     def __init__(self, config: VisualisationSetting) -> None:
         self.config = config
-        self.users_data: Dict[int, Dict] = None
-        self.users_connections: Dict[int, List[int]] = None
+        self.users_data: Dict[int, Dict] = dict()
+        self.users_connections: Dict[int, List[int]] = dict()
 
     def set_data_from_json(
         self, users_data: Dict[str, Dict], users_connections: Dict[str, List[int]]
@@ -134,7 +134,7 @@ class GraphVisualisation:
                         graph.add_node(
                             user_id,
                             label=self.users_data[user_id]["fullname"],
-                            **(self.users_data[user_id]),
+                            **dict(filter(lambda item: item[0] != "fullname", self.users_data[user_id].items()))
                         )
                         ready_nodes.add(user_id)
 
@@ -142,7 +142,7 @@ class GraphVisualisation:
                         graph.add_node(
                             friend_id,
                             label=self.users_data[friend_id]["fullname"],
-                            **(self.users_data[friend_id]),
+                            **dict(filter(lambda item: item[0] != "fullname", self.users_data[friend_id].items()))
                         )
                         ready_nodes.add(friend_id)
 
