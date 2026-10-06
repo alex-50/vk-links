@@ -280,7 +280,7 @@ vk-links/
 ## 🛠 Стек
 
 - **Python 3.11**
-- **[vk-api](https://github.com/python273/vk_api)** — работа с VK API
+- **[vk](https://pypi.org/project/vk/)** — python-обёртка для VK API
 - **[networkx](https://networkx.org/)** — построение графа
 - **[typer](https://typer.tiangolo.com/)** — CLI
 - **[rich](https://rich.readthedocs.io/)** — форматирование вывода
